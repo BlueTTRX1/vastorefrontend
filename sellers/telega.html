@@ -1,1 +1,886 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100812">
 
+  <title>Telega Account — VA Store</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --bg: #100812;
+      --card: #1b1020;
+      --card-light: #241329;
+      --pink: #ff2e93;
+      --pink-light: #ff70b5;
+      --text: #fff5fb;
+      --muted: #ad9baa;
+      --border: rgba(255, 46, 147, 0.2);
+      --green: #58e6a4;
+      --red: #ff6c86;
+      --yellow: #d65ece;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 22px 16px 100px;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(255, 46, 147, 0.15),
+          transparent 45%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      margin-bottom: 20px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 46, 147, 0.07);
+      color: var(--pink-light);
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .back-link:active {
+      transform: scale(0.97);
+    }
+
+    .top-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .brand-logo {
+      color: #fc037f;
+      display: grid;
+      place-items: center;
+      flex: 0 0 42px;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(255, 46, 147, 0.55);
+      border-radius: 13px;
+      background: linear-gradient(145deg, #35132c, #170c1b);
+      box-shadow: 0 0 22px rgba(255, 46, 147, 0.12);
+      overflow: hidden;
+    }
+
+    .brand-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 4px;
+      object-fit: contain;
+    }
+
+    .brand-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .status {
+      padding: 7px 10px;
+      border: 1px solid rgba(88, 230, 164, 0.25);
+      border-radius: 30px;
+      background: rgba(88, 230, 164, 0.07);
+      color: var(--green);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .seller-card {
+      padding: 21px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(
+        145deg,
+        rgba(36, 19, 41, 0.97),
+        rgba(22, 12, 26, 0.97)
+      );
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .seller-top {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .seller-logo {
+      display: grid;
+      place-items: center;
+      flex: 0 0 64px;
+      width: 64px;
+      height: 64px;
+      border: 1px solid rgba(255, 46, 147, 0.4);
+      border-radius: 19px;
+      background: rgba(255, 46, 147, 0.08);
+      overflow: hidden;
+    }
+
+    .seller-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 5px;
+      object-fit: contain;
+    }
+
+    .seller-name {
+      margin-bottom: 6px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .seller-description {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .seller-info {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 15px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .info-title {
+      margin-bottom: 9px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .info-text {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 48px;
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(100deg, #ff278d, #ff4ba4);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .button.secondary {
+      border: 1px solid var(--border);
+      background: rgba(255, 46, 147, 0.07);
+      color: var(--pink-light);
+    }
+
+    .seller-button {
+      margin-top: 17px;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+    .catalog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .count {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--pink-light);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .catalog-note {
+      margin: 0 0 15px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .products {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .product {
+      padding: 17px;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: linear-gradient(
+        145deg,
+        rgba(36, 19, 41, 0.95),
+        rgba(25, 13, 29, 0.95)
+      );
+    }
+
+    .product-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .country {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .phone-code {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .price-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .price {
+      color: var(--pink-light);
+      font-size: 23px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .stars-price {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--yellow);
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .star-icon {
+      display: block;
+      width: 14px;
+      height: 14px;
+      object-fit: contain;
+    }
+
+    .sku {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 15px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 46, 147, 0.18);
+      border-radius: 9px;
+      background: rgba(255, 46, 147, 0.06);
+      color: var(--pink-light);
+      font-size: 12px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 17px 0;
+    }
+
+    .feature {
+      min-width: 0;
+      padding: 11px;
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .feature-name {
+      margin-bottom: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .feature-value {
+      font-size: 13px;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .yes {
+      color: var(--red);
+    }
+
+    .no {
+      color: var(--green);
+    }
+
+    .unknown {
+      color: var(--yellow);
+    }
+
+    .buy-button {
+      margin-top: 2px;
+    }
+
+    .notice {
+      display: none;
+      margin-top: 22px;
+      padding: 18px;
+      border: 1px solid rgba(255, 46, 147, 0.4);
+      border-radius: 18px;
+      background: rgba(255, 46, 147, 0.07);
+      scroll-margin-top: 20px;
+    }
+
+    .notice.visible {
+      display: block;
+      animation: appear 0.2s ease-out;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .notice-title {
+      margin: 0 0 9px;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .notice-text {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .selected-sku {
+      margin: 12px 0;
+      padding: 12px;
+      border: 1px dashed rgba(255, 46, 147, 0.45);
+      border-radius: 11px;
+      color: var(--pink-light);
+      font-size: 20px;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .notice .button + .button {
+      margin-top: 9px;
+    }
+
+    .footer {
+      margin-top: 25px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .support-link {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      z-index: 10;
+      display: block;
+      width: calc(100% - 32px);
+      max-width: 488px;
+      margin: 0 auto;
+      padding: 15px;
+      border: 1px solid rgba(255, 46, 147, 0.28);
+      border-radius: 15px;
+      background: rgba(27, 16, 32, 0.94);
+      color: var(--pink-light);
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(12px);
+    }
+
+    @media (max-width: 360px) {
+      body {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      .seller-card,
+      .product {
+        padding: 14px;
+      }
+
+      .seller-name {
+        font-size: 19px;
+      }
+
+      .price {
+        font-size: 20px;
+      }
+
+      .stars-price {
+        font-size: 13px;
+      }
+
+      .star-icon {
+        width: 13px;
+        height: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <a class="back-link" href="../index.html">
+      На главную
+    </a>
+
+    <!-- Шапка -->
+    <header class="top-line">
+      <div class="brand">
+        <div class="brand-logo">
+          TA
+        </div>
+
+        <div>
+          <div>Telegram Account</div>
+          <div class="brand-subtitle">VA Store</div>
+        </div>
+      </div>
+
+      <div class="status">● Online</div>
+    </header>
+
+    <!-- Информация о продавце -->
+    <section class="seller-card">
+      <div class="seller-top">
+        <div class="seller-logo">
+          <img src="resources/ta.png" alt="TA">
+        </div>
+
+        <div>
+          <div class="seller-name">Telegram Account</div>
+          <div class="seller-description">
+            ● Связь с менеджером 24/7<br>
+            ● Verified VA Group
+          </div>
+        </div>
+      </div>
+
+      <div class="seller-info">
+        <div class="info-title">Как купить?</div>
+
+        <div class="info-text">
+          Выберите товар из каталога и нажмите «Купить».
+          После этого скопируйте SKU выбранного аккаунта
+          и отправьте его менеджеру для уточнения заказа.
+        </div>
+      </div>
+
+      <button
+        class="button seller-button"
+        id="sellerButton"
+        type="button"
+      >
+        Связаться с менеджером →
+      </button>
+    </section>
+
+    <!-- Каталог -->
+    <section class="section" id="catalog">
+      <div class="catalog-head">
+        <h1 class="section-title">Товар на продаже</h1>
+        <div class="count">Уточняйте наличие</div>
+      </div>
+
+      <p class="catalog-note">
+      </p>
+
+      <div class="products">
+
+        <!-- SKU: 483721 -->
+        <article class="product">
+          <div class="product-top">
+            <div>
+              <div class="country">
+                <span>🇺🇸</span>
+                <span>США</span>
+              </div>
+
+              <div class="phone-code">Код страны: +1</div>
+            </div>
+
+            <div class="price-block">
+              <div class="price">$1.20</div>
+              <div class="stars-price">
+                <img src="resources/tgstar.png" alt="" class="star-icon">
+                <span>500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sku">SKU: 483721</div>
+
+          <div class="features">
+            <div class="feature">
+              <div class="feature-name">Spamblock</div>
+              <div class="feature-value no">Нет</div>
+            </div>
+
+            <div class="feature">
+              <div class="feature-name">Отлега</div>
+              <div class="feature-value unknown">3+ месяца</div>
+            </div>
+          </div>
+
+          <button class="button buy-button" type="button" data-sku="483721">
+            Купить аккаунт →
+          </button>
+        </article>
+
+        <!-- SKU: 384945 -->
+        <article class="product">
+          <div class="product-top">
+            <div>
+              <div class="country">
+                <span>🇷🇺</span>
+                <span>Россия</span>
+              </div>
+
+              <div class="phone-code">Код страны: +7</div>
+            </div>
+
+            <div class="price-block">
+              <div class="price">$5.50</div>
+              <div class="stars-price">
+                <img src="resources/tgstar.png" alt="" class="star-icon">
+                <span>500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sku">SKU: 384945</div>
+
+          <div class="features">
+            <div class="feature">
+              <div class="feature-name">Spamblock</div>
+              <div class="feature-value no">Нет</div>
+            </div>
+
+            <div class="feature">
+              <div class="feature-name">Отлега</div>
+              <div class="feature-value unknown">3–6 месяцев</div>
+            </div>
+          </div>
+
+          <button class="button buy-button" type="button" data-sku="384945">
+            Купить аккаунт →
+          </button>
+        </article>
+
+        <!-- SKU: 729681 -->
+        <article class="product">
+          <div class="product-top">
+            <div>
+              <div class="country">
+                <span>🏴‍☠️</span>
+                <span>Рандом</span>
+              </div>
+
+              <div class="phone-code">Код страны: +0</div>
+            </div>
+
+            <div class="price-block">
+              <div class="price">$1.00</div>
+              <div class="stars-price">
+                <img src="resources/tgstar.png" alt="" class="star-icon">
+                <span>500</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sku">SKU: 729681</div>
+
+          <div class="features">
+            <div class="feature">
+              <div class="feature-name">Spamblock</div>
+              <div class="feature-value no">Нет</div>
+            </div>
+
+            <div class="feature">
+              <div class="feature-name">Отлега</div>
+              <div class="feature-value unknown">Рандом</div>
+            </div>
+          </div>
+
+          <button class="button buy-button" type="button" data-sku="729681">
+            Купить аккаунт →
+          </button>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Оформление заказа -->
+    <section class="notice" id="orderNotice">
+      <h2 class="notice-title">Оформление заказа</h2>
+
+      <p class="notice-text">
+        1. Скопируйте SKU товара ниже.<br>
+        2. Нажмите «Написать менеджеру».<br>
+        3. Отправьте менеджеру скопированный код
+        и уточните наличие товара перед оплатой.
+      </p>
+
+      <div class="selected-sku" id="selectedSku"></div>
+
+      <button
+        class="button secondary"
+        id="copySkuButton"
+        type="button"
+      >
+        Скопировать SKU
+      </button>
+
+      <button
+        class="button"
+        id="managerOrderButton"
+        type="button"
+      >
+        Написать менеджеру →
+      </button>
+    </section>
+
+    <footer class="footer">
+      VA Store 2026 <br>
+    </footer>
+
+  </main>
+
+  <!-- Поддержка -->
+  <a
+    class="support-link"
+    id="supportButton"
+    href="https://t.me/vaeurope"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Поддержка магазина · @vaeurope
+  </a>
+
+  <script>
+    const MANAGER = "https://t.me/vaeurope";
+    const SUPPORT = "https://t.me/vaeurope";
+
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+
+    // Связь с менеджером
+    document
+      .getElementById("sellerButton")
+      .addEventListener("click", () => {
+        openTelegramLink(MANAGER);
+      });
+
+    // Поддержка
+    document
+      .getElementById("supportButton")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        openTelegramLink(SUPPORT);
+      });
+
+    let selectedSku = "";
+
+    // Выбор товара
+    document.querySelectorAll(".buy-button").forEach((button) => {
+      button.addEventListener("click", async () => {
+        selectedSku = button.dataset.sku;
+
+        document.getElementById("selectedSku").textContent =
+          selectedSku;
+
+        const notice = document.getElementById("orderNotice");
+        notice.classList.add("visible");
+
+        const copyButton = document.getElementById("copySkuButton");
+        copyButton.textContent = "Скопировать SKU";
+
+        if (tg?.HapticFeedback) {
+          tg.HapticFeedback.impactOccurred("light");
+        }
+
+        notice.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest"
+        });
+
+        const copied = await copyText(selectedSku);
+
+        if (copied) {
+          copyButton.textContent = "SKU скопирован ✓";
+        }
+      });
+    });
+
+    // Повторное копирование SKU
+    document
+      .getElementById("copySkuButton")
+      .addEventListener("click", async () => {
+        if (!selectedSku) return;
+
+        const copied = await copyText(selectedSku);
+        const button = document.getElementById("copySkuButton");
+
+        button.textContent = copied
+          ? "SKU скопирован ✓"
+          : "Не удалось скопировать — выберите код вручную";
+
+        if (tg?.HapticFeedback && copied) {
+          tg.HapticFeedback.notificationOccurred("success");
+        }
+      });
+
+    // Переход к менеджеру после выбора товара
+    document
+      .getElementById("managerOrderButton")
+      .addEventListener("click", () => {
+        if (!selectedSku) return;
+        openTelegramLink(MANAGER);
+      });
+
+    // Открытие Telegram-ссылок
+    function openTelegramLink(url) {
+      if (tg && typeof tg.openTelegramLink === "function") {
+        tg.openTelegramLink(url);
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    }
+
+    // Копирование текста с запасным вариантом
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (error) {
+        // Используем запасной способ.
+      }
+
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "0";
+
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+
+        const success = document.execCommand("copy");
+        textarea.remove();
+
+        return success;
+      } catch (error) {
+        return false;
+      }
+    }
+  </script>
+</body>
+  </html>
