@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#100812">
+  <title>VA Store | GTA</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --bg: #100812;
+      --card: #1b1020;
+      --card-light: #241329;
+      --pink: #ff2e93;
+      --pink-light: #ff70b5;
+      --text: #fff5fb;
+      --muted: #ad9baa;
+      --border: rgba(255, 46, 147, 0.2);
+      --green: #58e6a4;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(255, 46, 147, 0.15),
+          transparent 45%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 24px 18px 120px;
+    }
+
+    /* HEADER */
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .logo {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 46, 147, 0.55);
+      border-radius: 14px;
+      background: linear-gradient(145deg, #35132c, #170c1b);
+      box-shadow: 0 0 25px rgba(255, 46, 147, 0.12);
+      overflow: hidden;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      padding: 5px;
+      object-fit: contain;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* BACK BUTTON */
+
+.back-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      margin-bottom: 20px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255, 46, 147, 0.07);
+      color: var(--pink-light);
+      font-size: 13px;
+      font-weight: 700;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .back-link:active {
+      transform: scale(0.97);
+    }
+
+    /* HEADING */
+
+    .heading {
+      margin-bottom: 25px;
+    }
+
+    .heading-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 18px;
+      object-fit: contain;
+    }
+
+    /* INFO */
+
+    .info {
+      padding: 18px;
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(
+        145deg,
+        rgba(36, 19, 41, .97),
+        rgba(22, 12, 26, .97)
+      );
+    }
+
+    .info-title {
+      font-size: 15px;
+      font-weight: 750;
+    }
+
+    .info-text {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* SECTIONS */
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .count {
+      padding: 5px 9px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 46, 147, .06);
+      color: var(--pink-light);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* CARDS */
+
+    .card {
+      display: block;
+      padding: 19px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border);
+      border-radius: 21px;
+      background: linear-gradient(
+        145deg,
+        rgba(36, 19, 41, .97),
+        rgba(22, 12, 26, .97)
+      );
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .2);
+      transition: border-color .2s, transform .15s;
+    }
+
+    .card:active {
+      transform: scale(.985);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+.card-icon img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 750;
+    }
+
+    .card-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 9px rgba(88, 230, 164, .35);
+    }
+    
+     .dot-off {
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 9px rgba(88, 230, 164, .35);
+    }
+
+    .description {
+      margin: 17px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    /* BUTTON */
+
+    .primary {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(100deg, #ff278d, #ff4ba4);
+      color: white;
+      font-size: 13px;
+      font-weight: 750;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(255, 46, 147, .12);
+    }
+
+    /* NOTICE */
+
+    .notice {
+      padding: 15px;
+      margin-top: 25px;
+      border: 1px solid rgba(255, 46, 147, .16);
+      border-radius: 14px;
+      background: rgba(255, 46, 147, .04);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .notice-title {
+      margin-bottom: 5px;
+      color: var(--pink-light);
+      font-weight: 750;
+    }
+
+    /* FOOTER */
+
+    .footer {
+      margin-top: 28px;
+      color: #796779;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    /* BOTTOM SUPPORT */
+
+    .bottom {
+      position: fixed;
+      z-index: 5;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 14px 18px max(18px, env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(255, 46, 147, .15);
+      background: rgba(16, 8, 18, .92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .bottom-inner {
+      max-width: 444px;
+      margin: auto;
+    }
+
+    .support {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px;
+      border: 1px solid rgba(255, 46, 147, .28);
+      border-radius: 14px;
+      background: rgba(27, 16, 32, .94);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+.support-icon {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+
+    @media (max-width: 360px) {
+      .app {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <!-- HEADER -->
+
+    <header class="header">
+
+      <div class="logo">
+        <img src="resources/VA.png" alt="VA">
+      </div>
+
+      <div>
+        <div class="brand">VA GTA</div>
+        <div class="subtitle">Digital Currency Marketplace</div>
+      </div>
+
+    </header>
+
+    <!-- BACK -->
+
+
+     <a class="back-link" href="../index.html">
+      На главную
+    </a>
+
+    <!-- HEADING -->
+
+    <section class="heading">
+      <img
+        src="resources/gtabanner.png"
+        alt="VA GTA"
+        class="heading-image"
+      >
+    </section>
+
+    <!-- INFO -->
+
+    <section class="info">
+
+      <div class="info-title">
+        Добро пожаловать в VA GTA
+      </div>
+
+      <div class="info-text">
+        Покупка и продажа игровой валюты.
+        Работаем с SAMP и CRMP.
+        Быстрые сделки и поддержка пользователей.
+      </div>
+
+    </section>
+
+    <!-- SERVICES -->
+
+    <div class="section-header">
+      <div class="section-label">Наши услуги</div>
+      <div class="count">03</div>
+    </div>
+
+
+    <!-- RADMIR RP -->
+
+    <a href="https://t.me/vaeurope" class="card">
+
+      <div class="card-top">
+
+        <div class="card-icon">
+  <img src="resources/radmir.png" alt="Radmir">
+</div>
+
+        <div>
+          <div class="card-name">Скуп виртов Radmir RP</div>
+
+          <div class="card-status">
+            <span class="dot"></span>
+            Принимаем заявки
+          </div>
+        </div>
+
+      </div>
+
+      <p class="description">
+        Скупаем игровую валюту Radmir RP. <br>
+        1.000.000 - 120₽ <br>
+        Выплата: Криптовалюта. 
+      </p>
+
+      <div class="primary">
+        Договориться о сделке 
+      </div>
+
+    </a>
+
+    <!-- AMAZING RP -->
+
+    <a href="https://t.me/vaeurope" class="card">
+
+      <div class="card-top">
+
+        <div class="card-icon">
+  <img src="resources/amazing.png" alt="Amazing">
+</div>
+
+        <div>
+          <div class="card-name">Скуп аккаунтов Amazing RP</div>
+
+          <div class="card-status">
+            <span class="dot-off"></span>
+            Временно не покупаем
+          </div>
+        </div>
+
+      </div>
+
+      <p class="description">
+        Временно не покупаем.
+      </p>
+
+      <div class="primary">
+        Договориться о сделке 
+      </div>
+
+    </a>
+
+    <!-- NOTICE -->
+
+    <section class="notice">
+
+      <div class="notice-title">
+        ✳ Информация
+      </div>
+
+      Перед совершением сделки ознакомьтесь
+      с условиями работы магазина.
+      По всем вопросам обращайтесь в техническую поддержку.
+
+    </section>
+
+    <div class="footer">
+      VA STORE · GTA MARKETPLACE
+    </div>
+
+  </main>
+
+  <!-- BOTTOM SUPPORT -->
+
+  <div class="bottom">
+
+    <div class="bottom-inner">
+
+      <a
+        class="support"
+        href="https://t.me/vaeurope"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="resources/manager.png" alt="Support" class="support-icon">
+       Менеджер @vaeurope
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- TELEGRAM WEBAPP -->
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor("#100812");
+      tg.setBackgroundColor("#100812");
+    }
+  </script>
+
+</body>
+</html>
