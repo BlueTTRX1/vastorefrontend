@@ -1,0 +1,495 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#100812">
+  <title>VA Store</title>
+
+  <script>
+    // =====================================
+    // НАСТРОЙКИ САЙТА
+    // =====================================
+
+    // true = технические работы включены
+    // false = технические работы выключены
+    const MAINTENANCE_MODE = false;
+
+    if (MAINTENANCE_MODE) {
+      window.location.replace("./maintenance.html");
+    }
+  </script>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --bg: #100812;
+      --card: #1b1020;
+      --card-light: #241329;
+      --pink: #ff2e93;
+      --pink-light: #ff70b5;
+      --text: #fff5fb;
+      --muted: #ad9baa;
+      --border: rgba(255, 46, 147, 0.2);
+      --green: #58e6a4;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at 50% -10%,
+          rgba(255, 46, 147, 0.15),
+          transparent 45%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 24px 18px 120px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 46, 147, 0.55);
+      border-radius: 14px;
+      background: linear-gradient(145deg, #35132c, #170c1b);
+      box-shadow: 0 0 25px rgba(255, 46, 147, 0.12);
+      overflow: hidden;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 5px;
+    }
+
+    .brand {
+      color: white;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* PNG ЗАГОЛОВОК */
+
+    .heading {
+      margin-bottom: 30px;
+    }
+
+    .heading-image {
+     border-radius: 18px;
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .count {
+      padding: 5px 9px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 46, 147, 0.06);
+      color: var(--pink-light);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .seller {
+      display: block;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: linear-gradient(
+        145deg,
+        rgba(36, 19, 41, 0.97),
+        rgba(22, 12, 26, 0.97)
+      );
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      transition:
+        border-color .2s,
+        transform .15s,
+        box-shadow .2s;
+    }
+
+    .seller:hover {
+      border-color: rgba(255, 46, 147, 0.55);
+      box-shadow: 0 12px 40px rgba(255, 46, 147, 0.07);
+    }
+
+    .seller:active {
+      transform: scale(.985);
+    }
+
+    .seller-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .seller-logo {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 46, 147, 0.4);
+      border-radius: 17px;
+      background: rgba(255, 46, 147, 0.08);
+      overflow: hidden;
+    }
+
+    .seller-logo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 4px;
+      object-fit: contain;
+    }
+
+    .seller-name {
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .seller-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 9px rgba(88, 230, 164, 0.35);
+    }
+    
+    
+      .dot-m{
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 9px rgba(88, 230, 164, 0.35);
+    }
+
+    .description {
+      margin: 18px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .primary {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 13px;
+      background: linear-gradient(100deg, #ff278d, #ff4ba4);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 750;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(255, 46, 147, 0.12);
+      transition: transform .15s, opacity .15s;
+    }
+
+    .seller:active .primary {
+      opacity: .9;
+    }
+
+    .footer {
+      margin-top: 28px;
+      color: #796779;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .bottom {
+      position: fixed;
+      z-index: 5;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 14px 18px max(18px, env(safe-area-inset-bottom));
+      border-top: 1px solid rgba(255, 46, 147, 0.15);
+      background: rgba(16, 8, 18, 0.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .bottom-inner {
+      max-width: 444px;
+      margin: auto;
+    }
+
+    .support {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px;
+      border: 1px solid rgba(255, 46, 147, 0.28);
+      border-radius: 14px;
+      background: rgba(27, 16, 32, 0.94);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 650;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      transition:
+        background .15s,
+        border-color .15s,
+        transform .15s;
+    }
+
+.support-icon {
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+}
+
+    .support:active {
+      transform: scale(.985);
+      border-color: rgba(255, 46, 147, 0.5);
+      background: var(--card-light);
+    }
+
+    @media (max-width: 360px) {
+      .app {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      .seller {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="app">
+
+    <header class="header">
+
+      <div class="logo">
+        <img src="sellers/resources/VA.png" alt="VA">
+      </div>
+
+      <div>
+        <div class="brand">MARKETPLACE</div>
+        <div class="subtitle">Version 0.2.0-alpha</div>
+      </div>
+
+    </header>
+
+    <!-- PNG ЗАГОЛОВОК -->
+
+    <section class="heading">
+      <img
+        src="sellers/resources/marketplace.png"
+        alt="VA Marketplace"
+        class="heading-image"
+      >
+    </section>
+
+    <div class="section-header">
+      <div class="section-label">Продавцы</div>
+      <div class="count">03</div>
+    </div>
+
+    <!-- TELEGRAM ACCOUNT -->
+
+    <a href="./sellers/telega.html" class="seller">
+
+      <div class="seller-top">
+
+        <div class="seller-logo">
+          <img src="sellers/resources/ta.png" alt="TA">
+        </div>
+
+        <div>
+          <div class="seller-name">Telegram Account</div>
+
+          <div class="seller-status">
+            <span class="dot"></span>
+            Работает
+          </div>
+        </div>
+
+      </div>
+
+      <p class="description">
+        Продажа аккаунтов в Telegram. <br>
+        Гарантии, оптовые пропозиции.
+      </p>
+
+      <div class="primary">Открыть магазин →</div>
+
+    </a>
+
+    <!-- GTA SHOP -->
+
+    <a href="./sellers/gta.html" class="seller" style="margin-top: 16px;">
+
+      <div class="seller-top">
+
+        <div class="seller-logo">
+          <img src="sellers/resources/gta.png" alt="GTA">
+        </div>
+
+        <div>
+          <div class="seller-name">Скуп виртов</div>
+
+          <div class="seller-status">
+            <span class="dot"></span>
+            Работает 
+          </div>
+        </div>
+
+      </div>
+
+      <p class="description">
+        Скупаем виртуальную валюту в SAMP, CRMP. <br>
+        В перспективе GTA 5.
+      </p>
+
+      <div class="primary">Открыть магазин →</div>
+
+    </a>
+
+    <!-- NFT SHOP -->
+
+    <a href="./sellers/nft.html" class="seller" style="margin-top: 16px;">
+
+      <div class="seller-top">
+
+        <div class="seller-logo">
+          <img src="sellers/resources/nft.png" alt="NFT Shop">
+        </div>
+
+        <div>
+          <div class="seller-name">NFT Shop</div>
+
+          <div class="seller-status">
+            <span class="dot-m"></span>
+            В разработке (временно недоступен)
+          </div>
+        </div>
+
+      </div>
+
+      <p class="description">
+        Скуп/Продажа NFT Username, NFT Gifts, <br>
+        TG Stars, TON DNS.
+      </p>
+
+      <div class="primary">Открыть магазин →</div>
+
+    </a>
+
+    <div class="footer">
+      VA STORE · DIGITAL MARKETPLACE
+    </div>
+
+  </main>
+
+  <!-- BOTTOM SUPPORT -->
+
+  <div class="bottom">
+
+    <div class="bottom-inner">
+
+      <a
+        class="support"
+        href="https://t.me/vaeurope"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="sellers/resources/support.png" alt="Support" class="support-icon">
+       Техническая поддержка
+      </a>
+
+    </div>
+
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor("#100812");
+      tg.setBackgroundColor("#100812");
+    }
+  </script>
+
+</body>
+</html>
