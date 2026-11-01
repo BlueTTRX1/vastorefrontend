@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#09090c">
+
+  <title>Технические работы — VA Store</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --bg: #09090c;
+      --card: #121217;
+      --pink: #ff176b;
+      --text: #ffffff;
+      --muted: #92909b;
+      --border: #29232b;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    .app {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 30px 22px 45px;
+      isolation: isolate;
+    }
+
+    /* Фоновое свечение */
+
+    .glow {
+      position: absolute;
+      z-index: -2;
+      top: 50%;
+      left: 50%;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: #ff176b12;
+      filter: blur(65px);
+      transform: translate(-50%, -55%);
+      animation: glow 4s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        opacity: .45;
+        transform: translate(-50%, -55%) scale(.85);
+      }
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -55%) scale(1.15);
+      }
+    }
+
+    /* Логотип */
+
+    .header {
+      position: absolute;
+      top: 30px;
+      left: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: appear .8s ease both;
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 45px;
+      height: 45px;
+      border-radius: 14px;
+      background: var(--pink);
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      box-shadow: 0 0 28px #ff176b35;
+    }
+
+    .brand {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -.7px;
+    }
+
+    .brand span {
+      color: var(--pink);
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Анимированная шестерёнка */
+
+    .visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 190px;
+      height: 190px;
+      margin-bottom: 32px;
+      animation: appear .9s ease both;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: 0;
+      border: 1px solid #ff176b30;
+      border-radius: 50%;
+      animation: rotate 12s linear infinite;
+    }
+
+    .orbit::before {
+      content: "";
+      position: absolute;
+      top: 22px;
+      left: 25px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 14px var(--pink);
+    }
+
+    .orbit.two {
+      inset: 17px;
+      border-color: #ff176b20;
+      animation: rotate 8s linear infinite reverse;
+    }
+
+    .orbit.two::before {
+      top: 24px;
+      left: 13px;
+      width: 5px;
+      height: 5px;
+      background: #ffffff;
+      box-shadow: 0 0 12px var(--pink);
+    }
+
+    .gear-wrap {
+      display: grid;
+      place-items: center;
+      width: 112px;
+      height: 112px;
+      border: 1px solid #ff176b45;
+      border-radius: 34px;
+      background: linear-gradient(145deg, #24101b, #121217);
+      box-shadow:
+        0 0 50px #ff176b18,
+        inset 0 0 30px #ff176b08;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .gear {
+      color: var(--pink);
+      font-size: 66px;
+      line-height: 1;
+      text-shadow: 0 0 28px #ff176b75;
+      animation: rotate 12s linear infinite;
+    }
+
+    @keyframes rotate {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-9px); }
+    }
+
+    /* Текст */
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 20px;
+      padding: 9px 13px;
+      border: 1px solid #ff176b35;
+      border-radius: 30px;
+      background: #ff176b0c;
+      color: var(--pink);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      animation: appear 1s ease both;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 12px var(--pink);
+      animation: blink 1.3s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .25; }
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(29px, 8vw, 36px);
+      line-height: 1.15;
+      letter-spacing: -1.4px;
+      text-align: center;
+      animation: appear 1.1s ease both;
+    }
+
+    h1 span {
+      color: var(--pink);
+    }
+
+    .description {
+      max-width: 320px;
+      margin: 17px 0 27px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+      text-align: center;
+      animation: appear 1.2s ease both;
+    }
+
+    /* Индикатор работ */
+
+    .progress-card {
+      width: 100%;
+      max-width: 340px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: linear-gradient(145deg, #161218, #101014);
+      animation: appear 1.3s ease both;
+    }
+
+    .progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+      font-size: 12px;
+    }
+
+    .progress-label {
+      color: #c4c0ca;
+    }
+
+    .progress-value {
+      color: var(--pink);
+      font-weight: 750;
+    }
+
+    .progress-track {
+      height: 5px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #29232b;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--pink);
+      box-shadow: 0 0 15px #ff176b90;
+      animation: progress 2.5s ease-out .4s forwards;
+    }
+
+    @keyframes progress {
+      to { width: 72%; }
+    }
+
+    .progress-note {
+      margin-top: 12px;
+      color: #77737f;
+      font-size: 11px;
+    }
+
+    .footer {
+      position: absolute;
+      right: 0;
+      bottom: 23px;
+      left: 0;
+      color: #55515d;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-align: center;
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-height: 700px) {
+      .header { top: 18px; }
+      .visual {
+        width: 145px;
+        height: 145px;
+        margin-bottom: 20px;
+      }
+      .gear-wrap {
+        width: 90px;
+        height: 90px;
+        border-radius: 27px;
+      }
+      .gear { font-size: 54px; }
+      .description { margin: 12px 0 18px; }
+      .footer { bottom: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <div class="glow"></div>
+
+    <header class="header">
+      <div class="logo">VA</div>
+      <div>
+        <div class="brand">VA <span>STORE</span></div>
+        <div class="subtitle">Маркетплейс Telegram</div>
+      </div>
+    </header>
+
+    <div class="visual" aria-hidden="true">
+      <div class="orbit"></div>
+      <div class="orbit two"></div>
+
+      <div class="gear-wrap">
+        <div class="gear">⚙</div>
+      </div>
+    </div>
+
+    <div class="status">
+      <span class="status-dot"></span>
+      Технические работы
+    </div>
+
+    <h1>
+      Мы скоро<br>
+      <span>вернёмся.</span>
+    </h1>
+
+    <p class="description">
+      VA Store временно недоступен.
+      Покупка аккаунтов доступна в ручную,
+      по всем вопросам @VAeurope.
+      <br><br>
+      Если это окно вы видите уже давно попробуйте обновить страницу.
+    </p>
+
+    <div class="progress-card">
+      <div class="progress-top">
+        <span class="progress-label">Обновление системы</span>
+        <span class="progress-value">В процессе</span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-bar"></div>
+      </div>
+
+      <div class="progress-note">
+        <span class="status-dot"
+          style="display:inline-block;width:5px;height:5px;margin-right:5px">
+        </span>
+        Выполняем необходимые работы
+      </div>
+    </div>
+
+    <footer class="footer">
+      VA STORE · SYSTEM MAINTENANCE
+    </footer>
+  </main>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.setHeaderColor("#09090c");
+      tg.setBackgroundColor("#09090c");
+    }
+  </script>
+</body>
+</html>
