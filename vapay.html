@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -116,11 +117,11 @@
                  glow 3s ease-in-out infinite;
     }
 
-.pay-logo img {
-  width: 160%;
-  height: 160%;
-  object-fit: contain;
-}
+    .pay-logo img {
+      width: 160%;
+      height: 160%;
+      object-fit: contain;
+    }
 
     .orbit {
       position: absolute;
@@ -212,33 +213,6 @@
       text-align: center;
     }
 
-    /* LOADING */
-
-    .progress {
-      height: 5px;
-      overflow: hidden;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, .06);
-    }
-
-    .progress-bar {
-      width: 45%;
-      height: 100%;
-      border-radius: 10px;
-      background: linear-gradient(90deg,
-        #ff278d, #ff9bc9);
-      box-shadow: 0 0 15px rgba(255, 46, 147, .5);
-      animation: loading 3s ease-in-out infinite alternate;
-    }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 11px;
-      color: #796779;
-      font-size: 10px;
-    }
-
     /* FEATURES */
 
     .features {
@@ -326,6 +300,62 @@
       animation-delay: 3s;
     }
 
+    /* ACCESS DENIED */
+
+    #telegram-block {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      background: #100812;
+      text-align: center;
+    }
+
+    .block-content {
+      max-width: 320px;
+      animation: fadeUp .5s ease both;
+    }
+
+    .block-logo {
+      width: 75px;
+      height: 75px;
+      margin: 0 auto 25px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255, 46, 147, .4);
+      border-radius: 23px;
+      background: linear-gradient(145deg, #321329, #180c1d);
+      color: var(--pink);
+      font-size: 28px;
+      font-weight: 900;
+      box-shadow: 0 0 35px rgba(255, 46, 147, .2);
+    }
+
+    #telegram-block h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    #telegram-block p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    #telegram-block button {
+      margin-top: 15px;
+      padding: 13px 25px;
+      border: none;
+      border-radius: 12px;
+      background: var(--pink);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
@@ -348,22 +378,11 @@
       50% { opacity: .35; transform: scale(.75); }
     }
 
-    @keyframes loading {
-      from { width: 25%; }
-      to { width: 75%; }
-    }
-
     @keyframes particle {
-      0% {
-        top: 110%;
-        opacity: 0;
-      }
+      0% { top: 110%; opacity: 0; }
       15% { opacity: .7; }
       85% { opacity: .4; }
-      100% {
-        top: -10%;
-        opacity: 0;
-      }
+      100% { top: -10%; opacity: 0; }
     }
 
     @keyframes fadeUp {
@@ -399,6 +418,20 @@
 
 <body>
 
+  <div id="telegram-block">
+    <div class="block-content">
+      <h2>Доступ ограничен</h2>
+      <p>
+        VA Pay доступен только через
+        Telegram Web App.
+        Откройте страницу через Telegram.
+      </p>
+      <button onclick="location.reload()">
+        Повторить
+      </button>
+    </div>
+  </div>
+
   <div class="particles">
     <div class="particle"></div>
     <div class="particle"></div>
@@ -407,7 +440,7 @@
     <div class="particle"></div>
   </div>
 
-  <main class="app">
+  <main class="app" style="display:none;">
 
     <header class="header">
       <div class="logo">
@@ -431,7 +464,7 @@
 
       <div class="tagline">
         Новая платежная система<br>
-        для партнёров VA Group 
+        для партнёров VA Group
       </div>
 
     </section>
@@ -440,18 +473,16 @@
 
       <div class="status-top">
         <span class="status-dot"></span>
-        Offline 
+        Offline
       </div>
 
       <div class="status-title">
-        Разрабатываем 
+        Разрабатываем
       </div>
 
       <p class="status-description">
         Мы работаем над созданием VA Pay.
-        
       </p>
-
 
     </section>
 
@@ -474,7 +505,7 @@
       <div class="feature">
         <div class="feature-title">VA Ecosystem</div>
         <div class="feature-description">
-          Вывод средств с VA Store 
+          Вывод средств с VA Store
         </div>
       </div>
 
@@ -489,20 +520,49 @@
 
     <footer class="footer">
       <span>VA PAY</span> · Testnet <br>
-      © 2026 VA STORE 
+      © 2026 VA STORE
     </footer>
 
   </main>
 
   <script>
-    const tg = window.Telegram?.WebApp;
+    (function () {
+      const tg = window.Telegram?.WebApp;
+      const app = document.querySelector('.app');
+      const particles = document.querySelector('.particles');
+      const block = document.getElementById('telegram-block');
 
-    if (tg) {
+      function denyAccess() {
+        app.style.display = 'none';
+        particles.style.display = 'none';
+        block.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      // Telegram WebApp validation
+      if (
+        !tg ||
+        typeof tg.initData !== 'string' ||
+        tg.initData.length === 0 ||
+        !tg.initDataUnsafe ||
+        !tg.initDataUnsafe.user
+      ) {
+        denyAccess();
+        return;
+      }
+
+      // Initialize Telegram WebApp
       tg.ready();
       tg.expand();
+
       tg.setHeaderColor("#100812");
       tg.setBackgroundColor("#100812");
-    }
+
+      // Show application
+      app.style.display = 'block';
+      particles.style.display = 'block';
+
+    })();
   </script>
 
 </body>
